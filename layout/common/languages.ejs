@@ -14,7 +14,7 @@ if (languages.length > 1) {%>
           </span>
             </button>
         </div>
-        <div class="dropdown-menu has-text-left" role="menu">
+        <div class="dropdown-menu has-text-left" role="menu" style="top:100%">
             <div class="dropdown-content">
             <% languages.forEach((language) => { %>
                 <a href="<%= url_for(i18n_path(!is_default_language(language) ? language : null)) %>" class="dropdown-item">

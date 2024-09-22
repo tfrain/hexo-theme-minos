@@ -2,28 +2,69 @@
     <div class="container">
         <div class="columns content">
             <div class="column is-narrow has-text-centered">
-                &copy; <%= date(new Date(), 'YYYY') %> <%= get_config('author') || get_config('title') %>&nbsp;
-                <%= __('powered_by') %> <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
-                        href="http://github.com/ppoffice/hexo-theme-minos">Minos</a>
+                &copy; <%= date(new Date(), 'YYYY' ) %>
+                    <%= get_config('author') || get_config('title') %>&nbsp;
+                        <%= __('powered_by') %> <a href="http://hexo.io/" target="_blank">Hexo</a> & <a
+                                href="http://github.com/ppoffice/hexo-theme-minos">Minos</a>
             </div>
             <div class="column is-hidden-mobile"></div>
 
             <% if (has_config('footer_links')) { %>
-            <div class="column is-narrow">
-                <div class="columns is-mobile is-multiline is-centered">
-                <% for (let name in get_config('footer_links')) { %>
-                    <% let link = get_config('footer_links')[name]; %>
-                <a class="column is-narrow has-text-black" title="<%= name %>" href="<%= typeof(link) === 'string' ? link : link.url%>">
-                    <% if (typeof(link) === 'string') { %>
-                    <%= name %>
-                    <% } else { %>
-                    <i class="<%= link.icon %>"></i>
-                    <% } %>
-                </a>
-                <% } %>
+                <div class="column is-narrow">
+                    <div class="columns is-mobile is-multiline is-centered">
+                        <% for (let name in get_config('footer_links')) { %>
+                            <% let link=get_config('footer_links')[name]; %>
+                                <a class="column is-narrow has-text-black" title="<%= name %>"
+                                    href="<%= typeof(link) === 'string' ? link : link.url%>">
+                                    <% if (typeof(link)==='string' ) { %>
+                                        <%= name %>
+                                            <% } else { %>
+                                                <i class="<%= link.icon %>"></i>
+                                                <% } %>
+                                </a>
+                                <% } %>
+                    </div>
                 </div>
-            </div>
-            <% } %>
+                <% } %>
         </div>
     </div>
+    <div id="adblock-warning"
+        style="display:none; background-color: rgb(240, 240, 226); color: red; font-size: 18px; text-align: center; padding: 8px; position: fixed; top: 5%; width: 100%; z-index: 9999;">
+        Please add this site to the AD blocker whitelist to support this site.（请将本站加入广告拦截器白名单以支持本站。）
+    </div>
 </footer>
+
+<script>
+    // Function called if AdBlock is not detected
+    function adBlockNotDetected() {
+        console.log('AD blocker is not enabled');
+    }
+    // Function called if AdBlock is detected
+    function adBlockDetected() {
+        document.getElementById('adblock-warning').style.display = 'block';
+    }
+
+    // We look at whether BlockAdBlock already exists.
+    if (typeof blockAdBlock !== 'undefined' || typeof BlockAdBlock !== 'undefined') {
+        // If this is the case, it means that something tries to usurp are identity
+        // So, considering that it is a detection
+        adBlockDetected();
+    } else {
+        // Otherwise, you import the script BlockAdBlock
+        var importFAB = document.createElement('script');
+        importFAB.onload = function () {
+            // If all goes well, we configure BlockAdBlock
+            blockAdBlock.onDetected(adBlockDetected)
+            blockAdBlock.onNotDetected(adBlockNotDetected);
+        };
+        importFAB.onerror = function () {
+            // If the script does not load (blocked, integrity error, ...)
+            // Then a detection is triggered
+            adBlockDetected();
+        };
+        importFAB.integrity = 'sha256-xjwKUY/NgkPjZZBOtOxRYtK20GaqTwUCf7WYCJ1z69w=';
+        importFAB.crossOrigin = 'anonymous';
+        importFAB.src = 'https://cdnjs.cloudflare.com/ajax/libs/blockadblock/3.2.1/blockadblock.min.js';
+        document.head.appendChild(importFAB);
+    }
+</script>
